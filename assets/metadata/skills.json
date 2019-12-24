@@ -7,7 +7,7 @@
     "hiding": {
         "flag": "../assets/img/flag_hiding.png",
         "name": "Hiding",
-        "requirements": "* You\n* A safe place"
+        "requirements": "* You\n* A safe place\n* NPC or Players around"
     },
     "stealth": {
         "flag": "../assets/img/flag_stealth.png",
