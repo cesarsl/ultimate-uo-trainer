@@ -1,11 +1,8 @@
-import time
-import queue
 import datetime as dt
 import threading
 
 from stealth import (
     UseSkill,
-    ChangeSkillLockState,
     GetSkillCap,
     GetSkillValue,
     GetSkillCurrentValue,
@@ -13,11 +10,12 @@ from stealth import (
 
 
 class Hiding(threading.Thread):
+    """Hiding Skill Trainer Thread"""
+
     def __init__(self, window):
         super(Hiding, self).__init__(daemon=True)
         self._skill = "Hiding"
         self._wait_time = 11
-        self._queue = queue
         self._window = window
         self._current = GetSkillCurrentValue("Hiding")
         self._value = GetSkillValue("Hiding")
@@ -51,4 +49,3 @@ class Hiding(threading.Thread):
         self._time_wait = dt.datetime.now()
         self._running = False
         self._window.Element("status_bar").Update("Stopped")
-

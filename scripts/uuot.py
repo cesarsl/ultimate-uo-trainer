@@ -1,6 +1,5 @@
 import json
-import threading
-from typing import Dict, List
+from typing import List
 
 import PySimpleGUI as sg
 
@@ -95,4 +94,3 @@ class UltimateUOTrainer:
 if __name__ == "__main__":
     app = UltimateUOTrainer(MAIN_LAYOUT)
     app.start()
-    pass
