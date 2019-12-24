@@ -1,14 +1,12 @@
 import json
 import threading
-import PySimpleGUI as sg
-
 from typing import Dict, List
 
-from py_stealth import CharName, GetSkillCap, GetSkillCurrentValue, GetSkillValue
-
-from packages.hiding import Hiding
+import PySimpleGUI as sg
 
 from gui.app import ASSETS_DEFAULT_FLAG, MAIN_LAYOUT, MAIN_SIZE, MAIN_TITLE
+from packages.hiding import Hiding
+from py_stealth import CharName, GetSkillCap, GetSkillCurrentValue, GetSkillValue
 
 # Constants
 

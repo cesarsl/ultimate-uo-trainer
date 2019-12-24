@@ -23,20 +23,23 @@ class Hiding(threading.Thread):
         self._value = GetSkillValue("Hiding")
         self._cap = GetSkillCap("Hiding")
         self._running = True
+        self._time_start = None
+        self._time_now = None
+        self._time_wait = None
+        self._time_running = None
 
     def run(self):
-        self._start_time = dt.datetime.now()
+        self._time_start = dt.datetime.now()
         while self._running is True:
-            self._timeout_start = dt.datetime.now()
-            self._timeout_end = self._timeout_start + dt.timedelta(
-                seconds=self._wait_time
-            )
+            self._time_now = dt.datetime.now()
+            self._time_wait = self._time_now + dt.timedelta(seconds=self._wait_time)
+
             UseSkill(self._skill)
-            while self._timeout_end >= dt.datetime.now():
-                self._now = dt.datetime.now()
-                self._running_time = self._now - self._start_time
+
+            while self._time_wait >= dt.datetime.now():
+                self._time_running = dt.datetime.now() - self._time_start
                 self._window.Element("status_bar").Update(
-                    f"Running for {int(self._running_time.total_seconds())} seconds"
+                    f"Running for {int(self._time_running.total_seconds())} seconds"
                 )
                 self._window.Element("skill_current").Update(
                     GetSkillCurrentValue(self._skill)
@@ -45,7 +48,7 @@ class Hiding(threading.Thread):
                 self._window.Element("skill_cap").Update(GetSkillCap(self._skill))
 
     def terminate(self):
-        self._timeout_end = dt.datetime.now()
+        self._time_wait = dt.datetime.now()
         self._running = False
         self._window.Element("status_bar").Update("Stopped")
 
