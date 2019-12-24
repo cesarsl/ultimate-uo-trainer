@@ -1,11 +1,6 @@
 import PySimpleGUI as sg
 
-# Constants
-
-MAIN_TITLE = "Ultimate UO Trainer v1.0"
-MAIN_SIZE = (640, 480)
-DEFAULT_REQ = "Select a skill before proceding."
-ASSETS_DEFAULT_FLAG = "../assets/img/flag_blank.png"
+from gui.config.window import IMAGES, TEXTS
 
 # Global configuration
 
@@ -20,19 +15,17 @@ SKILL_STATS_LCOL = sg.Col(
         [sg.T("Real", auto_size_text=True)],
         [sg.T("Cap", auto_size_text=True)],
         [sg.T("Session Gain", auto_size_text=True)],
-        [sg.T("Total Gain", auto_size_text=True)],
     ],
     size=(128, 152),
 )
 
 SKILL_STATS_RCOL = sg.Col(
     layout=[
-        [sg.T("", key="skill_name", size=(100, 1))],
-        [sg.T("", key="skill_current", size=(100, 1))],
-        [sg.T("", key="skill_real", size=(100, 1))],
-        [sg.T("", key="skill_cap", size=(100, 1))],
-        [sg.T("", key="skill_session", size=(100, 1))],
-        [sg.T("", key="skill_total", size=(100, 1))],
+        [sg.T(TEXTS.get("default_skill_name"), key="skill_name", size=(100, 1))],
+        [sg.T(TEXTS.get("default_skill_current"), key="skill_current", size=(100, 1))],
+        [sg.T(TEXTS.get("default_skill_real"), key="skill_real", size=(100, 1))],
+        [sg.T(TEXTS.get("default_skill_cap"), key="skill_cap", size=(100, 1))],
+        [sg.T(TEXTS.get("default_skill_session"), key="skill_session", size=(100, 1))],
     ],
     size=(128, 152),
 )
@@ -40,7 +33,11 @@ SKILL_STATS_RCOL = sg.Col(
 SKILL_STATS_FRAME = sg.Frame(
     title="Training Information",
     layout=[
-        [sg.Image(filename=ASSETS_DEFAULT_FLAG, size=(304, 32), key="skill_flag")],
+        [
+            sg.Image(
+                filename=IMAGES.get("default_flag"), size=(304, 32), key="skill_flag"
+            )
+        ],
         [SKILL_STATS_LCOL, SKILL_STATS_RCOL],
         [sg.T("")],
     ],
@@ -48,7 +45,15 @@ SKILL_STATS_FRAME = sg.Frame(
 )
 
 SKILL_REQUIREMENTS_MCOL = sg.Col(
-    layout=[[sg.T(DEFAULT_REQ, key="requirements_text", size=(200, 16),)],],
+    layout=[
+        [
+            sg.T(
+                TEXTS.get("default_requirements"),
+                key="requirements_text",
+                size=(200, 16),
+            )
+        ],
+    ],
     size=(272, 152),
 )
 

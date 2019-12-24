@@ -3,7 +3,8 @@ from typing import List
 
 import PySimpleGUI as sg
 
-from gui.app import ASSETS_DEFAULT_FLAG, MAIN_LAYOUT, MAIN_SIZE, MAIN_TITLE
+from gui.config.window import IMAGES, SIZE, TITLE
+from gui.model import MAIN_LAYOUT
 from packages.hiding import Hiding
 from py_stealth import CharName, GetSkillCap, GetSkillCurrentValue, GetSkillValue
 
@@ -16,12 +17,10 @@ ASSETS_SKILLS = "../assets/metadata/skills.json"
 
 class UltimateUOTrainer:
     def __init__(self, layout: List) -> None:
-        with open(ASSETS_SKILLS, "r") as f:
-            self._skills_info = json.load(f)
+        with open(ASSETS_SKILLS, "r") as filename:
+            self._skills_info = json.load(filename)
 
-        self._window = sg.Window(
-            title=MAIN_TITLE, size=MAIN_SIZE, layout=layout
-        ).Finalize()
+        self._window = sg.Window(title=TITLE, size=SIZE, layout=layout).Finalize()
 
         self._combo_list = [
             self._skills_info.get(x).get("name") for x in self._skills_info
@@ -84,7 +83,7 @@ class UltimateUOTrainer:
             self._window.Element("skill_cap").Update(GetSkillCap(skill))
         else:
             self._window.Element("skill_flag").Update(
-                filename=ASSETS_DEFAULT_FLAG, size=(304, 32)
+                filename=IMAGES.get("default_flag"), size=(304, 32)
             )
             self._window.Element("skill_current").Update("")
             self._window.Element("skill_real").Update("")
@@ -92,5 +91,5 @@ class UltimateUOTrainer:
 
 
 if __name__ == "__main__":
-    app = UltimateUOTrainer(MAIN_LAYOUT)
-    app.start()
+    APP = UltimateUOTrainer(MAIN_LAYOUT)
+    APP.start()
