@@ -1,5 +1,4 @@
 import json
-import queue
 import threading
 import PySimpleGUI as sg
 
@@ -33,7 +32,6 @@ class UltimateUOTrainer:
         self._combo_list.insert(0, "Choose a skill...")
         self._window.Element("skill_combo").Update(values=self._combo_list)
         self._window.Element("status_bar").Update(f"Character: {CharName()}")
-        self._queue = queue.Queue()
         self._thread = None
 
     def start(self):
@@ -54,22 +52,13 @@ class UltimateUOTrainer:
                 self._window.Element("stop").Update(disabled=False)
                 choice = values.get("skill_combo")
                 if choice == "Hiding":
-                    self._thread = Hiding(self._queue, self._window)
+                    self._thread = Hiding(self._window)
                     self._thread.start()
 
             if event == "stop":
                 self._window.Element("start").Update(disabled=False)
                 self._window.Element("stop").Update(disabled=True)
                 self._thread.terminate()
-
-            try:
-                message = self._queue.get_nowait()
-                print(message)
-            except queue.Empty:
-                message = None
-
-            if message is not None:
-                print(message)
 
         self._window.close()
 
