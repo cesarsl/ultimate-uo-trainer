@@ -1,0 +1,17 @@
+{
+    "anatomy": {
+        "flag": "../assets/img/flag_anatomy.png",
+        "name": "Anatomy",
+        "requirements": "* You\n* Another player and/or NPC\n* Your time"
+    },
+    "hiding": {
+        "flag": "../assets/img/flag_hiding.png",
+        "name": "Hiding",
+        "requirements": "* You\n* A safe place"
+    },
+    "stealth": {
+        "flag": "../assets/img/flag_stealth.png",
+        "name": "Stealth",
+        "requirements": "* You\n* Safe Moongate in Trammel"
+    }
+}
