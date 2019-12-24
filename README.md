@@ -1,6 +1,6 @@
 # Ultimate UO Trainer for Stealth Client
 
-This is a side project that I for fun. Feel free to colaborate or use my work, provided you cite it.
+This is a side project that I do for fun. Feel free to colaborate or use my work, provided you cite it.
 
 ## Requirements
 
