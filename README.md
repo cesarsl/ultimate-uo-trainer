@@ -16,7 +16,11 @@ The Trainer main window will open. Select the desired skill, requirements for ea
 
 Just click on button `Start`, sit and relax.
 
-## WIP
+## Changelog
 
-- Only Hiding Implemented (v1.0)
+### 1.0.0
+
+- Add GUI
+- Add threading for skills training
+- Hiding skill package example
 
