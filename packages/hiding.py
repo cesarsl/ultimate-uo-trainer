@@ -1,11 +1,12 @@
 import datetime as dt
 import threading
 
+from logger import logger
 from stealth import (
-    UseSkill,
     GetSkillCap,
-    GetSkillValue,
     GetSkillCurrentValue,
+    GetSkillValue,
+    UseSkill,
 )
 
 
@@ -17,9 +18,11 @@ class Hiding(threading.Thread):
         self._skill = "Hiding"
         self._wait_time = 11
         self._window = window
-        self._current = GetSkillCurrentValue("Hiding")
-        self._value = GetSkillValue("Hiding")
-        self._cap = GetSkillCap("Hiding")
+        self._initial = float(GetSkillValue(self._skill))
+        self._current = self._initial
+        self._gain = 0.0
+        self._value = GetSkillValue(self._skill)
+        self._cap = GetSkillCap(self._skill)
         self._running = True
         self._time_start = None
         self._time_now = None
@@ -35,15 +38,23 @@ class Hiding(threading.Thread):
             UseSkill(self._skill)
 
             while self._time_wait >= dt.datetime.now():
+                self._current = GetSkillValue(self._skill)
                 self._time_running = dt.datetime.now() - self._time_start
+
                 self._window.Element("status_bar").Update(
                     f"Running for {int(self._time_running.total_seconds())} seconds"
                 )
                 self._window.Element("skill_current").Update(
                     GetSkillCurrentValue(self._skill)
                 )
-                self._window.Element("skill_real").Update(GetSkillValue(self._skill))
+                self._window.Element("skill_real").Update(self._current)
                 self._window.Element("skill_cap").Update(GetSkillCap(self._skill))
+
+                if self._current > self._initial:
+                    self._gain = self._current - self._initial
+                self._window.Element("skill_session").Update(
+                    "{0:3.1f}".format(self._gain)
+                )
 
     def terminate(self):
         self._time_wait = dt.datetime.now()
