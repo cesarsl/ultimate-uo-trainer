@@ -53,7 +53,7 @@ class Hiding(threading.Thread):
                 if self._current > self._initial:
                     self._gain = self._current - self._initial
                 self._window.Element("skill_session").Update(
-                    "{0:3.1f}".format(self._gain)
+                    "{0:.1f}".format(self._gain)
                 )
 
     def terminate(self):

@@ -6,7 +6,7 @@ import PySimpleGUI as sg
 from gui.config.window import IMAGES, SIZE, TITLE
 from gui.model import MAIN_LAYOUT
 from packages.hiding import Hiding
-from py_stealth import CharName, GetSkillCap, GetSkillCurrentValue, GetSkillValue
+from stealth import CharName, GetSkillCap, GetSkillCurrentValue, GetSkillValue
 
 # Constants
 
@@ -88,6 +88,7 @@ class UltimateUOTrainer:
             self._window.Element("skill_current").Update("")
             self._window.Element("skill_real").Update("")
             self._window.Element("skill_cap").Update("")
+            self._window.Element("skill_session").Update(0.0)
 
 
 if __name__ == "__main__":

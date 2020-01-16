@@ -702,6 +702,8 @@ _get_skill_id_from_socket = _ScriptMethod(89)  # GetSkillID
 _get_skill_id_from_socket.restype = _int  # SkillID
 _get_skill_id_from_socket.argtypes = [_str]  # SkillName
 
+def GetSkillID(name):
+    return _get_skill_id(name)
 
 def _get_skill_id(name):
     skill_id = _get_skill_id_from_socket(name)

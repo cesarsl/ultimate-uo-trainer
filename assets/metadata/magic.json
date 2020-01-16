@@ -1,0 +1,14 @@
+{
+    "Enemy of One": {
+        "type": "chivalry",
+        "id": 1083,
+        "name": "Enemy of One",
+        "mana_min": 20
+    },
+    "Consecrate Weapon": {
+        "type": "chivalry",
+        "id": 1082,
+        "name": "Consecrate Weapon",
+        "mana_min": 20
+    }
+}
