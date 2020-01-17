@@ -97,59 +97,56 @@ PROPERTIES = [
 
 
 class Item:
-    def __init__(self):
-        self.properties = {}
+    def __init__(self, obj_id):
+        self.obj_id = int(obj_id, 16)
+        self.cliloc = {}
+
+        with open("../assets/metadata/cliloc.json", "r", encoding="utf-8") as fpointer:
+            self.cliloc.update(json.load(fpointer))
+
         for prop in PROPERTIES:
-            self.properties.update({prop: None})
+            setattr(self, prop.replace(" ", "_"), None)
 
-    def get_prop(self, name):
-        print(self.properties.get(name))
+        self.tooltips = stealth.GetTooltipRec(self.obj_id)
 
-    def set_prop(self, name, value):
-        self.properties.update({name: value})
+        for tip in self.tooltips:
+            cliloc_id = str(tip.get("Cliloc_ID"))
+            cliloc_params = tip.get("Params")
+            prop_key = self.cliloc.get(cliloc_id).get("name").replace(" ", "_")
+            prop_params = []
+            for param in cliloc_params:
+                prop_params.append(self.param_parser(param))
 
-    def print_props(self):
-        for idx, prop in self.properties.items():
-            print(idx, prop)
+            if prop_key == "weapon_speed":
+                print(prop_key, prop_params)
+                setattr(self, prop_key, prop_params[0])
+            elif prop_key != "":
+                if len(prop_params) == 1:
+                    setattr(self, prop_key, prop_params[0])
 
+    def param_parser(self, param):
+        if "#" in param:
+            return self.cliloc.get(param[1:]).get("name")
+        if param.isdigit():
+            return int(param)
+        if re.match(r"[0-9]+\.?[0-9]+s|[0-9]s", param):
+            return float(param.replace("s", ""))
+        return str(param)
 
-def item_to_dict(obj_id):
-    cliloc = {}
+    def props(self):
+        props = {}
+        for prop in PROPERTIES:
+            prop_key = prop.replace(" ", "_")
+            props.update({prop_key: getattr(self, prop_key)})
 
-    with open("../assets/metadata/cliloc.json", "r", encoding="utf-8") as fpointer:
-        cliloc.update(json.load(fpointer))
-
-    tooltips = stealth.GetTooltipRec(int(obj_id, 16))
-
-    item = Item()
-
-    for tip in tooltips:
-        cliloc_id = str(tip.get("Cliloc_ID"))
-        cliloc_params = tip.get("Params")
-
-        key = cliloc.get(cliloc_id)
-        params = []
-
-        for param in cliloc_params:
-            params.append(param_parser(cliloc, param))
-
-        if key == "weapon speed":
-            print(key, params)
-            item.set_prop("weapon speed", params[0])
-
-    print(item.print_props())
+        return props
 
 
-def param_parser(cloc, param):
-    if "#" in param:
-        return cloc.get(param[1:]).get("name")
-    if param.isdigit():
-        return int(param)
-    if re.match(r"\d.?\d+?s", param):
-        return float(param.replace("s", ""))
-    return str(param)
+equip_01 = Item("0x42E2D0E2")
+print(equip_01.weapon_speed)
+# equip_02 = Item("0x4070D4B7")
+# print(equip_02.weapon_speed)
 
-
-item_to_dict("0x42E2D0E2")
-# item_to_dict("0x4070D4B7")
-# item_to_dict("0x415B7910")
+equip_03 = Item("0x415B7910")
+print(equip_03.weapon_speed)
+print(equip_03.props())
