@@ -702,8 +702,6 @@ _get_skill_id_from_socket = _ScriptMethod(89)  # GetSkillID
 _get_skill_id_from_socket.restype = _int  # SkillID
 _get_skill_id_from_socket.argtypes = [_str]  # SkillName
 
-def GetSkillID(name):
-    return _get_skill_id(name)
 
 def _get_skill_id(name):
     skill_id = _get_skill_id_from_socket(name)
@@ -3940,6 +3938,39 @@ _bandage_self = _ScriptMethod(360)  # SCBandageSelf
 
 def BandageSelf():
     _bandage_self()
+
+_global_chat_join_channel = _ScriptMethod(361)  # SCGlobalChatJoinChannel
+_global_chat_join_channel.argtypes = [_str]   # ChName
+
+def GlobalChatJoinChannel(ChName):
+    _global_chat_join_channel(ChName)
+
+global_chat_leave_channel = _ScriptMethod(362)  # SCGlobalChatLeaveChannel
+
+def GlobalChatLeaveChannel():
+    global_chat_leave_channel()
+
+_global_chat_send_msg = _ScriptMethod(363)  # SCGlobalChatSendMsg
+_global_chat_send_msg.argtypes = [_str]   # MsgText
+
+def GlobalChatSendMsg(MsgText):
+    _global_chat_send_msg(MsgText)
+
+global_chat_active_channel = _ScriptMethod(364)  # SCGlobalChatActiveChannel
+global_chat_active_channel.restype = _str
+
+def GlobalChatActiveChannel():
+    return global_chat_active_channel()
+
+
+global_chat_channel_list = _ScriptMethod(365)  # SCGlobalChatChannelsList
+global_chat_channel_list.restype = _str
+
+def GlobalChatChannelsList():
+    result = global_chat_channel_list()
+    return result.split('\r\n')[:-1]  # cause '' was in the end of list
+
+
 
 
 

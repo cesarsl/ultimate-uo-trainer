@@ -1,101 +1,95 @@
-import re
+import itertools
+import json
 
 import stealth
 
-from assets.metadata.cliloc import CLILOC, SKILLS_REQ, SLAYERS, HANDLE, NAMES, BOOLEANS
-
-
-class Item:
-    def __init__(self, obj_id):
-        self.obj_id = int(obj_id, 16)
-        self._tooltips = stealth.GetTooltipRec(self.obj_id)
-        self.properties = {}
-
-        for tip in self._tooltips:
-            cliloc_id = str(tip.get("Cliloc_ID"))
-            cliloc_params = tip.get("Params")
-            prop_key = re.sub(
-                re.compile(r"<.*?>"),
-                "",
-                CLILOC.get(cliloc_id).get("name").replace(" ", "_").casefold(),
-            )
-            prop_params = []
-            for param in cliloc_params:
-                prop_params.append(self._param_parser(param))
-
-            if cliloc_id == "1053099":
-                setattr(self, "material", prop_params[0])
-                setattr(self, "type", prop_params[1])
-            elif cliloc_id == "1072789":
-                setattr(self, "weight", prop_params[0])
-            elif int(cliloc_id) in BOOLEANS:
-                setattr(self, prop_key, True)
-            elif int(cliloc_id) in NAMES:
-                setattr(self, "name", prop_key.replace("_", " ").title())
-            elif int(cliloc_id) in SLAYERS:
-                setattr(self, "slayer", prop_key.split("_")[0])
-            elif int(cliloc_id) in SKILLS_REQ:
-                setattr(
-                    self,
-                    "skill_required",
-                    CLILOC.get(cliloc_id).get("name").split(": ")[1],
-                )
-            elif int(cliloc_id) in HANDLE:
-                setattr(
-                    self,
-                    "handling",
-                    CLILOC.get(cliloc_id).get("name").replace("_", " "),
-                )
-            elif cliloc_id == "1060639":
-                setattr(
-                    self,
-                    "durability",
-                    {"current": prop_params[0], "total": prop_params[1]},
-                )
-            elif prop_key != "":
-                print(prop_key, prop_params)
-                if len(prop_params) == 1:
-                    setattr(self, prop_key, prop_params[0])
-
-        self._collect_props()
-
-    def _param_parser(self, param):
-        if "#" in param:
-            return CLILOC.get(param[1:]).get("name")
-        if param.isdigit():
-            return int(param)
-        if re.match(r"[0-9]+[\.\,]?[0-9]+s|[0-9]+s", param):
-            return float(param.replace("s", "").replace(",", "."))
-        return str(param)
-
-    def _collect_props(self):
-        props = {}
-        attributes = [
-            attr
-            for attr in dir(self)
-            if not attr.startswith("_")
-            and getattr(self, attr) is not None
-            and attr != "all_props"
-            and attr != "properties"
-        ]
-        for attr in attributes:
-            props.update({attr: getattr(self, attr)})
-        self.properties = props
-
-    @property
-    def all_props(self):
-        return self.properties
-
+from packages.items import Item
 
 # equip_02 = Item("0x415B7910")
 # print(equip_02.weapon_speed)
 # print(equip_02.type)
 # print(equip_02.material)
 
-print(stealth.GetTooltipRec(0x40000108))
-equip_01 = Item("0x40000108")
-print(equip_01.all_props)
+# print(stealth.GetTooltipRec(0x40000108))
+# equip_01 = Item("0x40000108")
+# print(equip_01.all_props)
 
-print(stealth.GetTooltipRec(0x40000105))
-equip_02 = Item("0x40000105")
-print(equip_02.all_props)
+# print(stealth.GetTooltipRec(0x40000105))
+# equip_02 = Item("0x40000105")
+# print(equip_02.all_props)
+
+
+def chunked_iterable(iterable, size):
+    it = iter(iterable)
+    while True:
+        chunk = list(itertools.islice(it, size))
+        if not chunk:
+            break
+        yield chunk
+
+
+def find_item_types(container):
+    _types = list(range(int("0x0", 16), int("0xFFFF", 16) + 1))
+    _finded_list = []
+    _equipments = {}
+
+    for chunk in chunked_iterable(_types, 255):
+        stealth.FindTypesArrayEx(chunk, [0xFFFF], [container.get("ID")], True)
+        _finded_list += stealth.GetFindedList()
+
+    return _finded_list
+    # for item in _finded_list:
+    #     if item != Self():
+    #         _type = hex(GetType(item))
+    #         _tooltip = GetTooltip(item).split("|")
+    #         _name = _tooltip[0].casefold()
+
+    #         _equipments.update(
+    #             {_name: {"name": _name.title(), "type": "", "type_id": _type}}
+    #         )
+
+    # with open("../assets/metadata/equipments.json", "r", encoding="utf-8") as fpointer:
+    #     _old_equipments = json.load(fpointer)
+
+    # _old_equipments.update(_equipments)
+
+    # with open("../assets/metadata/equipments.json", "w+", encoding="utf-8") as fpointer:
+    #     json.dump(_old_equipments, fpointer)
+
+
+stealth.ClientRequestObjectTarget()
+
+while not stealth.ClientTargetResponsePresent():
+    stealth.Wait(1)
+
+items = find_item_types(stealth.ClientTargetResponse())
+
+equipments = {}
+
+for item in items:
+    tmp = Item(hex(item))
+    equipments.update(
+        {
+            tmp.name.casefold().replace(" ", "_"): {
+                "name": tmp.name,
+                "type": "weapon",
+                "type_id": tmp.type_id,
+            }
+        }
+    )
+
+with open("../assets/metadata/equipments.json", "r") as fpointer:
+    old_equipments = json.load(fpointer)
+
+old_equipments.update(equipments)
+
+with open("../assets/metadata/equipments.json", "w+", encoding="utf-8") as fpointer:
+    json.dump(old_equipments, fpointer)
+
+saferoom = {
+    "positions": [
+        {"x_ini": 498, "x_end": 501, "y_ini": 364, "y_end": 374,},
+        {"x_ini": 488, "x_end": 497, "y_ini": 364, "y_end": 379,},
+        {"x_ini": 479, "x_end": 487, "y_ini": 364, "y_end": 376,},
+    ],
+}
